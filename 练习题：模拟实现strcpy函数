@@ -1,0 +1,32 @@
+#include<string.h>
+#include<stdio.h>
+#include<assert.h>
+
+void my_strcpy(char* c, char* arr);
+
+void main() {
+	char arr[10] = "abcdf";
+	char c[10] = "";
+	my_strcpy(c,arr);
+}
+
+void my_strcpy(char* c, const char* arr) {
+
+	//strcpy函数在检测到\0时，会停止功能；
+  
+	char* f = c;
+  
+	//确保c和arr空指针不会影响程序
+  
+	assert(c && arr);
+  
+	while (*arr!='\0')
+	{
+		*c = *arr;
+		arr++;
+		c++;
+	}
+  
+	printf("%s",f);
+  
+}
