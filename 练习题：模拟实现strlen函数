@@ -1,0 +1,19 @@
+#include<string.h>
+#include<assert.h>
+
+int main() {
+	char arr[10] = { "123456789" };
+	int res = my_strlen(arr);
+	//断言  相当于异常  有问题跳出 执行程序
+	assert(arr);
+	printf("%s\n",arr);
+	printf("%d\n", res);
+}
+
+int my_strlen(const char* arr) {
+	int n = 0;
+	while (*arr++) {
+		n++;
+	}
+	return n;
+}
