@@ -1,0 +1,148 @@
+
+创建数据库
+------------------------------------------------------------------------------------------------------------------
+1，创建数据库
+create database [数据库名];
+
+2，查看数据库
+show databases;
+
+3，指定要操作的数据库
+use [数据库名];
+
+4，删除数据路
+dorp database [数据库名];
+
+------------------------------------------------------------------------------------------------------------------
+创建表
+------------------------------------------------------------------------------------------------------------------
+1，创建表
+create table [表名](id int,
+                    name varchar(20),
+                    score decimal(3,1),//这里表示3位有效数字，小数点后一位有效数字
+                    email varchar(50));
+                    
+create table exercise(
+					id int,
+					name varchar(20),
+					chinese decimal(3,1),
+					math decimal(3,1),
+					english decimal(3,1));
+					
+2，查看所有表
+show tables;
+
+3，查看指定表的结构 (字段及约束)
+desc [表名];
+
+4，删除表
+drop table [表名];
+
+5，查看表的数据
+select * from [表名];
+------------------------------------------------------------------------------------------------------------------
+CRUD操作
+------------------------------------------------------------------------------------------------------------------
+新增操作
+
+1，向表中插入数据 (全列插入)
+insert into [表名] values (对应字段内容);
+
+insert into exercise values(2,'孙悟空',75.6,69.9,91.3),
+					 (3,'猪八戒',82.3,36.5,72.1),
+					 (4,'沙和尚',66.8,73.9,91.2),
+					 (5,'曹孟德',92.3,65.2,78.8),
+					 (6,'刘玄德',77.2,75.9,82.9),
+					 (7,'孙仲谋',69.4,95.2,82.1);	
+					 			 
+2，指定列插入 //(没有被指定的字段，被默认填充位NULL)
+insert into [表名] (id,name) values (2,'狗蛋');
+	//列的数目和类型要对应
+	//指定的列要在包含在表中
+	//同时要想正确设置中文，必须指定mysql字符编码方式，修改my.ini配置文件，在[mysql]、[mysqld]最后加入default-character-set=utf-8
+	//改后重启即可
+	
+3，插入多组数据
+insert into [表名] (id,name) values (2,'狗蛋'),
+							        (3,'鸭蛋'),
+							        (4,'李蛋');
+//思路就是在value后多加几个逗号
+------------------------------------------------------------------------------------------------------------------
+查找操作
+------------------------------------------------------------------------------------------------------------------
+1，查找表的所有数据 
+//这样的查找方式很粗暴，仅限于测试环境下使用，千万不可在生产环境中执行这样的SQL，
+//生成环境的服务器压力本来就很大，数据量非常多，一旦执行这样的操作，就可能给服务器造成巨大的负担
+//甚至导致服务器卡死或者宕机，给用户造成恶劣影响。
+//以后的工作中，对生产环境的操作一定要谨慎操作！
+select * from [表名] ;
+select * from exercise ;
+
+2，按指定列查找
+select 列字段1,列字段2, 列字段3 from [表名];
+select id , name , chinese from exercise;
+
+3,包含表达式的查询 
+//列字段的表达式 一样可以表达
+//和按照指定列查找类似，只不过指定的是 三列的表达式运算结果
+select name , chinese+english+math from exercise;
+
+//还比如 查找所有同学的语文成绩，并在这个基础上再加10分
+select name, chinese , chinese+10 from exercise;
+
+//表达式计算得到的结果类型不一定和原来字段类型完全一致，但会尽可能保证数据正确
+
+4,查询字段指令别名
+select name, chinese+english+math , chinese+english+math as total from exercise;//as 可以省略
+
+5，去重 //这里的去重，是对select后的结果去重显示，不会对原表有任何更改
+//指定某一列去重
+select distinct chinese from exercise;
+//SELECT得到的是一张临时表，行数可能和原表一致，也可能不一致，都是很正常的；比如这里的69.4它对应的就是id8或者id9的数据
+
+//同时也可以指定多列去重，多列必须均有重复数据才会除
+select distinct chinese,english,math from exercise;
+
+6，单列排序 （asc升序；desc降序）
+order by -> 指定按照某列排序
+比如说：查找成绩 按照语文成绩升序排序
+select * from exercise order by 列名 升序/降序;
+select * from exercise order by chinese asc;
+select * from exercise order by chinese desc;
+
+//也可以按照总成绩排序
+select name,chinese,english,math,chinese+english+math as total from exercise order by total desc;
+select *, chinese+english+math as total from exercise order by total desc;
+
+7，多列排序
+//比如还是按照成绩来
+//先第一优先级语文，当语文成绩相同时
+//按照第二优先级数学排序，当数学也相同时
+//按照第三优先级英语来排序，这就是多列排序
+select * from [表名] order by [列1] desc,[列2] desc,[列3] desc;
+select * from exercise order by chinese desc,math desc,english desc;
+
+8 条件查询【重中之重】
+
+8.1 使用运算符 =,>,<=>,&&,is null,berween and,
+select * from exercise where chinese = null; //错误用法
+select * from exercise where chinese <=> null;
+select * from exercise where chinese is null;
+select * from exercise where chinese > 90;
+select * from exercise where english > math && chinese > english;
+select * from exercise where english > 90 or chinese > 90;
+select * from exercise where math > 75 && chinese >75 && english > 75;
+select id,name,chinese+math+english as total from exercise where chinese+math+english < 200;
+select * from exercise where math between 70 and 80;//between a and b ;这里a要小于b；
+select * from exercise where math in (78.9,82.3,75.9); //in -> 满足括号中的任何一个值，就返回结果
+------------------------------------------------------------------------------------------------------------------
+修改操作
+------------------------------------------------------------------------------------------------------------------
+1，修改表中一条数据
+update [表名] set [列名]=想要改成的数据 where id= 想要修改的数据id;
+update exercise set chinese = 99 where id = 1;
+------------------------------------------------------------------------------------------------------------------
+删除操作
+------------------------------------------------------------------------------------------------------------------
+1，删除表中的一条数据
+delete from exercise where id = 1;
