@@ -1,0 +1,247 @@
+seqlist.h
+
+#include<stdio.h>
+#include <string.h>
+#include <stdlib.h> 
+#include<assert.h>
+
+typedef int seqdatatype;
+
+//定义顺序表
+typedef struct seqlist
+{
+	//指针
+	seqdatatype* p;
+	//空间大小
+	int capacity;
+	//当前状态
+	int size;
+}sl;
+
+//初始化
+void initseqlist(sl* s);
+
+//打印元素
+void display(sl* s);
+
+//头插
+void toucha(sl* s, seqdatatype x);
+
+//检查扩容
+void seqlistcheckcapacity(sl* s);
+
+//尾插
+void weicha(sl* s,seqdatatype x);
+
+//任意位置插入
+void insertanypos(sl* s ,int pos, seqdatatype x);
+
+//查找pos位置的元素
+seqdatatype find(sl* s, int pos);
+
+//修改pos位置的元素
+void modify(sl* s, int pos, seqdatatype x);
+
+//删除pos位置的元素
+void delete(sl* s, int pos);
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+seqlist.c
+#include"seqlist.h"
+
+//初始化
+void initseqlist(sl* s) {
+	//元素置为0
+	s->p = NULL;
+	s->capacity = 0;
+	s->size = 0;
+}
+
+//打印元素
+void display(sl* s) {
+	for (int i = 0; i < s->size; i++)
+	{
+		printf("%d ",*(s->p+i));
+	}
+	printf("\n");
+}
+
+//扩容，实现动态存储
+void seqlistcheckcapacity(sl* s)
+{
+	// 满了就要扩容
+	if (s->size == s->capacity)
+	{
+		int newcapacity = s->capacity == 0 ? 4 : s->capacity * 2;
+		seqdatatype* tmp = (seqdatatype*)realloc(s->p, newcapacity * sizeof(seqdatatype));
+		if (tmp == NULL)
+		{
+			printf("realloc fail\n");
+			exit(-1);
+		}
+		else
+		{
+			s->p = tmp;
+			s->capacity = newcapacity;
+		}
+	}
+}
+
+
+//头插
+void toucha(sl* s, seqdatatype x) {
+	//调用扩容接口
+
+	if (s->size == s->capacity)
+	{
+		int newcapacity = s->capacity == 0 ? 4 : s->capacity * 2;
+		seqdatatype* temp = (seqdatatype*)realloc(s->p, newcapacity * sizeof(seqdatatype));
+		if (temp == NULL)
+		{
+			printf("realloc faile \n");
+			exit(-1);
+		}
+		else
+		{
+			s->p = temp;
+			s->capacity = newcapacity;
+		}
+	}
+	//头插逻辑
+	int end = s->size;
+	while (end >0)
+	{
+		s->p[end] = s->p[end - 1];
+		end--;
+	}
+	s->p[end] = x;
+	s->size++;
+}
+
+//尾插
+void weicha(sl* s, seqdatatype x) {
+	//检查空间是否需要扩容
+	seqlistcheckcapacity(s);
+	//尾插逻辑
+	s->p[s->size] = x;
+	s->size++;
+}
+
+//任意位置插入
+void insertanypos(sl* s, int pos, seqdatatype x) {
+
+	//检查空间是否需要扩容
+	seqlistcheckcapacity(s);
+
+	//检查位置pos的合法性
+	if (pos > s->size && pos < 0)
+	{
+		printf("插入的位置不合法\n");
+		exit(-1);
+	}
+	//assert(pos <= s->size);
+
+	//头部插入
+	if (pos == 0)
+	{
+		toucha(s, x);
+		return;
+	}
+
+	//尾部插入
+	if (pos == s->size)
+	{
+		weicha(s, x);
+		return;
+	}
+
+	//中间位置插入
+	//找到pos节点，向后移动
+	int end = s->size;
+	while (end >= pos)
+	{
+		s->p[end] = s->p[end-1];
+		end--;
+	}
+	s->p[end] = x;
+	s->size++;
+}
+
+//查找pos位置的元素
+seqdatatype find(sl* s, int pos) {
+
+	//检查位置pos的合法性
+	//assert(pos<=s->size-1);
+	for (int i = 0; i < s->size; i++)
+	{
+		if (pos == i)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+//修改pos位置的元素
+void modify(sl* s, int pos,seqdatatype x) {
+
+	assert(pos <= s->size);
+	*(s->p + pos) = x;
+}
+
+//删除pos位置的元素
+void delete(sl* s, int pos) {
+	assert(pos <= s->size);
+	//后面元素向前 覆盖，size--
+	int end = s->size;
+	int start = pos;
+	while (start<end)
+	{
+		s->p[start] = s->p[start + 1];
+		start++;
+	}
+	s->size--;
+}
+
+/*这一块我的盲点在于 1.扩容 2.指针和静态数组之间的联系
+   1.扩容类似于数据库连接池的调用，主要就是使用好realloc函数，知道它返回类型是void* ，所以需要按照使用类型进行转换；
+   同时呢，扩容变大的地址，要赋予指针，就好像一开始我允许指针+1 +1 的走 但是道理board就不可以走，扩容之后board变大了 ，指针的起点
+   需要重新赋予。
+   2.指针的移动，数组的元素推移，指针凭什么表示成数组的形式。
+*/
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+main.c
+#include"seqlist.h"
+
+void main() {
+
+	sl s;
+	initseqlist(&s);
+	toucha(&s, 4);
+	toucha(&s, 3);
+	toucha(&s, 2);
+	toucha(&s, 1);
+	display(&s);
+
+	weicha(&s, 5);
+	display(&s);
+
+	insertanypos(&s, 3, 9);
+	
+	display(&s);
+
+	int num = find(&s, 3);
+	printf("find No:%d number \n",num);
+
+	modify(&s,2, 7);
+	display(&s);
+
+	delete(&s, 5);
+	display(&s);
+
+	delete(&s,0);
+	display(&s);
+
+	delete(&s,1);
+	display(&s);
+
+}
