@@ -1,0 +1,219 @@
+sltlist.h
+
+#pragma once
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+
+typedef int stldatatype;
+
+typedef struct stlist {
+	stldatatype data;
+	struct stlist* next;
+}Node;
+
+void weicha(Node** pphead, stldatatype x);
+
+void display(Node** pphead);
+
+void toucha(Node** pphead,stldatatype x);
+
+void inser_anywhere(Node** pphead, int pos, stldatatype x);
+
+int size(Node** pphead);
+
+void del(Node** pphead , int pos);
+
+void findbypos(Node* phead , int pos);
+
+void modifybypos(Node** pphead, int pos, stldatatype x);
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+sltlist.c
+#include"sltlist.h"
+
+//**pphead 是存放Node* 的地址；
+void weicha(Node** pphead, stldatatype x) {
+	//new 节点 并 初始化节点； 
+		//(用malloc开辟空间给这个节点) 等价于java中 Ener ener = new Ener()；
+	Node* node = malloc(sizeof(stldatatype));
+	node->data = x;
+	node->next = NULL;
+
+	if (*pphead == NULL)
+	{
+		*pphead = node;
+	}
+	else {
+		Node* cur = *pphead;
+		while (cur->next != NULL)
+		{
+			cur = cur->next;
+		}
+		cur->next = node;
+	}
+}
+
+void display(Node** pphead) {
+
+	Node* cur = *pphead;
+	while (cur != NULL)
+	{
+		printf("%d->",cur->data);
+		cur = cur->next;
+	}
+	printf("NULL\n");
+}
+
+void toucha(Node** pphead, stldatatype x) {
+
+	Node* node = malloc(sizeof(stldatatype));
+	node->data = x;
+	node->next = NULL;
+
+	if (*pphead == NULL)
+	{
+		*pphead = node;
+		return;
+	}
+		node->next = *pphead;
+		*pphead = node;
+}
+
+int size(Node** pphead) {
+	Node* cur = *pphead;
+	int count = 0;
+	while (cur != NULL)
+	{
+		count++;
+		cur = cur->next;
+	}
+	return count;
+}
+
+void inser_anywhere(Node** pphead, int pos, stldatatype x) {
+
+	Node* node = malloc(sizeof(stldatatype));
+	node->data = x;
+	node->next = NULL;
+	
+	assert(pos<= size(pphead));
+
+	if (pos == 0)
+	{
+		toucha(pphead, x);
+		return;
+	}
+
+	if (pos == size(pphead))
+	{
+		weicha(pphead,x);
+		return;
+	}
+
+	Node* cur = *pphead;
+	while (pos > 1)
+	{
+		cur = cur->next;
+		pos--;
+	}
+	node->next = cur->next;
+	cur->next = node;
+}
+
+void del(Node** pphead, int pos) {
+
+	Node* cur = *pphead;
+	//头删
+	if (pos == 0)
+	{
+		*pphead = (*pphead)->next;
+		return;
+	}
+	
+	while (pos > 1)
+	{
+		
+
+		//尾删
+		if (pos == size(pphead))
+		{
+			while (cur->next->next != NULL)
+			{
+				cur = cur->next;
+			}
+			cur->next = NULL;
+			break;
+		}
+
+		cur = cur->next;
+		pos--;
+
+	}
+
+	cur->next = cur->next->next;
+
+}
+
+void findbypos(Node* phead, int pos) {
+	Node* cur = phead;
+	while (pos >0)
+	{
+		cur = cur->next;
+		pos--;
+	}
+	printf("第%d个元素为: %d\n", pos,cur->data);
+}
+
+void modifybypos(Node** pphead, int pos,stldatatype x) {
+	Node* cur = *pphead;
+	while (pos > 0)
+	{
+		cur = cur->next;
+		pos--;
+	}
+	cur->data = x;
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+main.c
+
+#include"sltlist.h"
+
+void main() {
+	Node* head = NULL;
+
+	//Node* 表示的是 创建一个节点指针，其内存空间存储的是节点的地址 
+	// head -> 可以解引用 ，可以操作使用成员data和next的值。
+	// 如果想要操作头节点的值，必须要传地址；
+
+	//weicha(&head, 1);
+	//weicha(&head, 2);
+	//weicha(&head, 3);
+	//weicha(&head, 4);
+	//weicha(&head, 5);
+	toucha(&head, 5);
+	toucha(&head, 4);
+	toucha(&head, 3);
+	toucha(&head, 2);
+	inser_anywhere(&head,0,1);
+	display(&head);
+
+	del(&head, 0);
+	display(&head);
+
+	findbypos(head, 0);
+	findbypos(head, 1);
+	findbypos(head, 2);
+	findbypos(head, 3);
+
+	modifybypos(&head, 3, 33);
+	modifybypos(&head, 2, 33);
+	modifybypos(&head, 1, 33);
+	modifybypos(&head, 0, 33);
+
+	display(&head);
+
+}
