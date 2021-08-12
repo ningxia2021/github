@@ -123,7 +123,15 @@ void inser_anywhere(Node** pphead, int pos, stldatatype x) {
 }
 
 void del(Node** pphead, int pos) {
-
+	//空表
+	if(*pphead == NULL){
+		return;
+	}
+	//只有一个头节点
+	if((*pphead)->next == NULL){
+		free(*pphead);
+	}
+	//至少有2个节点
 	Node* cur = *pphead;
 	//头删
 	if (pos == 0)
