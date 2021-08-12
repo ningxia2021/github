@@ -1,0 +1,238 @@
+List.h
+
+#pragma once
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+
+typedef int ListNodeDataType;
+
+struct ListNode {
+	ListNodeDataType data;
+	struct ListNode* prev;
+	struct ListNode* next;
+};
+
+typedef struct ListNode ListNode;
+
+void toucha(ListNode** pphead, ListNodeDataType x);
+
+void weicha(ListNode** pphead, ListNodeDataType x);
+
+void display(ListNode** pphead);
+
+void insert_anywhere(ListNode** pphead, ListNode* pos, ListNodeDataType x);
+
+void del(ListNode** pphead, ListNode* pos);
+
+ListNode* find(ListNode** pphead, ListNodeDataType x);
+
+void modify(ListNode* phead, ListNode* pos, ListNodeDataType x);
+
+*************************************************************************************************************************************************************************
+
+List.c
+
+#include"List.h"
+
+void toucha(ListNode** pphead, ListNodeDataType x) {
+	ListNode* node = malloc(sizeof(ListNode));
+	node->next = NULL;
+	node->prev = NULL;
+	node->data = x;
+
+	if (*pphead == NULL)
+	{
+		*pphead = node;
+	}
+	else {
+		node->next = *pphead;
+		(*pphead)->prev = node;
+		*pphead = node;
+	}
+}
+
+void weicha(ListNode** pphead, ListNodeDataType x) {
+	ListNode* node = malloc(sizeof(ListNode));
+	node->next = NULL;
+	node->prev = NULL;
+	node->data = x;
+
+	ListNode* cur = *pphead;
+	if (*pphead == NULL)
+	{
+		toucha(pphead,x);
+	}
+	else {
+		while (cur->next != NULL)
+		{
+			cur = cur->next;
+		}
+		cur->next = node;
+		node->prev = cur;
+		node->next = NULL;
+
+	}
+
+}
+
+void display(ListNode** pphead) {
+	ListNode* cur = *pphead;
+	while (cur != NULL)
+	{
+		printf("%d->",cur->data);
+		cur = cur->next;
+	}
+	printf("NULL\n");
+}
+
+void insert_anywhere(ListNode** pphead, ListNode* pos, ListNodeDataType x) {
+
+	ListNode* node = malloc(sizeof(ListNode));
+	node->data = x;
+	node->next = NULL;
+	node->prev = NULL;
+
+	if (*pphead == NULL)
+	{
+		toucha(pphead,x);
+	}
+	else {
+
+		ListNode* cur = *pphead;
+
+		while (cur->next != NULL)
+		{
+			if (cur->next == pos)
+			{
+				node->next = pos;
+				pos->prev = node;
+				cur->next = node;
+				node->prev = cur;
+				return;
+			}
+			cur = cur->next;
+		}
+		if (cur->next == pos)
+		{
+			node->next = pos;
+			pos->prev = node;
+			cur->next = node;
+			node->prev = cur;
+			return;
+		}
+
+	}
+
+}
+
+void del(ListNode** pphead, ListNode* pos) {
+	ListNode* cur = *pphead;
+	if ( *pphead == NULL )
+	{
+		return; 
+	}
+	if ((*pphead)->next == NULL)
+	{
+		free(*pphead);
+		return;
+	}
+	while (cur->next != NULL)
+	{
+		if (cur->next == pos)
+		{
+			cur->next = pos->next;
+			pos->next->prev = cur;
+			return;
+		}
+		cur = cur->next;
+	}
+	if (cur->next == pos)
+	{
+		cur->next = pos->next;
+		pos->next->prev = cur;
+		return;
+	}
+	cur->next = pos->next;
+	pos->next->prev = cur;
+}
+
+ListNode* find(ListNode** pphead, ListNodeDataType x) {
+	ListNode* cur = *pphead;
+	if (*pphead == NULL)
+	{
+		return NULL;
+	}
+	if ((*pphead)->next == NULL)
+	{
+		free(*pphead);
+		return;
+	}
+	while (cur != NULL)
+	{
+		if (cur->data == x)
+		{
+			return cur;
+		}
+		cur = cur->next;
+	}
+	return NULL;
+}
+
+void modify(ListNode* phead, ListNode* pos, ListNodeDataType x) {
+	ListNode* cur = pos;
+	//if (phead == NULL)
+	//{
+	//	return;
+	//}
+	//else
+	//{
+	//	while (cur->next != NULL)
+	//		{
+	//			if (cur->next == pos)
+	//			{
+	//				cur->next->data = x;
+	//				return;
+	//			}
+	//			cur = cur->next;
+	//		}
+	//}
+	cur->data = x;
+}
+
+*************************************************************************************************************************************************************************
+
+main.c
+
+#include"List.h"
+
+void main() {
+	ListNode* head = NULL;
+	
+	//toucha(&head, 4);
+	//toucha(&head, 4);
+	//toucha(&head, 4);
+	//toucha(&head, 4);
+	//toucha(&head, 4);
+
+	weicha(&head, 1);
+	weicha(&head, 2);
+	weicha(&head, 3);
+	weicha(&head, 4);
+	weicha(&head, 5);
+
+	//toucha(&head, 2);
+	//weicha(&head, 1);
+
+	display(&head);
+
+	ListNode* ret = find(&head, 3);
+	insert_anywhere(&head,ret,99); //1 2 99 '3' 4 5
+	modify(head, ret,33 );// 1 2 99 '33' 4 5
+	display(&head);
+	del(&head, ret->prev);// 1 2 '33' 4 5
+	display(&head);
+
+}
+
+*************************************************************************************************************************************************************************
