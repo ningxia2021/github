@@ -1,0 +1,169 @@
+List.h
+
+#pragma once
+
+#include<stdio.h>
+#include<stdlib.h>
+
+//定义双向循环，带头节点的节点咯
+typedef int NodeDataType;
+
+typedef struct ListNode {
+	NodeDataType data;
+	struct ListNode* prev;
+	struct ListNode* next;
+}Node;
+
+//初始化
+void InitNode(Node** ppehad);
+
+//尾插
+void weicha(Node** pphead,NodeDataType x);
+
+//打印
+void Display(Node** pphead);
+
+//头插
+void toucha(Node** pphead, NodeDataType x);
+
+Node* find(Node** pphead, Node* pos);
+
+//随意插
+void insert(Node** pphead, Node* pos, NodeDataType x);
+
+//随意删
+void del(Node** pphead, Node* pos);
+
+******************************************************************************************************************************************************************
+
+List.c
+
+#include"List.h"
+
+//初始化
+void InitNode(Node** pphead) {
+	(*pphead)->next = *pphead;
+	(*pphead)->prev = *pphead;
+	(*pphead)->data = 0;
+}
+
+//尾插
+void weicha(Node** pphead, NodeDataType x) {
+	//定义尾节点
+	Node* tail = (*pphead)->prev;
+	//定义新节点
+	Node* node = (Node*)malloc(sizeof(Node));
+	node->data = x;
+	node->prev = NULL;
+	node->next = NULL;
+	//尾插
+	tail->next = node;
+	node->next = *pphead;
+	node->prev = tail;
+	(*pphead)->prev = node;
+
+}
+
+//打印
+void Display(Node** pphead){
+	Node* cur = (*pphead)->next;
+	while (cur != *pphead)
+	{
+		printf("%d->", cur->data);
+		cur = cur->next;
+	}
+	printf("NULL\n");
+}
+
+//头插
+void toucha(Node** pphead, NodeDataType x) {
+	//定义头
+	Node* cur = (*pphead)->next;
+	//开辟新节点
+	Node* node = (Node*)malloc(sizeof(Node));
+	node->next = NULL;
+	node->prev = NULL;
+	node->data = x;
+	//头插
+	(*pphead)->next = node;
+	node->prev = (*pphead);
+	node->next = cur;
+	cur->prev = node;
+}
+Node* find(Node** pphead, NodeDataType x) {
+	Node* cur = (*pphead)->next;
+	while (cur != *pphead)
+	{
+		if (cur->data == x) {
+			printf("pos找到了\n");
+			return cur;
+		}
+		cur = cur->next;
+		
+	}
+	printf("没找到\n");
+
+	return NULL;
+}
+//在pos节点前插入x
+void insert(Node** pphead, Node* pos, NodeDataType x) {
+	if (pos == NULL) {
+		printf("您想要插入的节点位置不存在\n");
+		return;
+	}
+		
+
+	//开辟新节点空间
+	Node* node = (Node*)malloc(sizeof(Node));
+	node->prev = NULL;
+	node->next = NULL;
+	node->data = x;
+
+	Node* p = pos;
+	Node* first = p->prev;
+	first->next = node;
+	node->prev = first;
+	node->next = p;
+	p->prev = node;
+		
+	
+}
+
+void del(Node** pphead, Node* pos) {
+	if (pos == NULL) {
+		return;
+	}
+	else {
+		Node* tou = pos->prev;
+		Node* wei = pos->next;
+		tou->next = wei;
+		wei->prev = tou;
+	}
+	
+}
+
+******************************************************************************************************************************************************************
+main.c
+
+#include"List.h"
+
+void main() {
+
+	Node* head = malloc(sizeof(Node));
+
+	InitNode(&head);
+
+	weicha(&head, 1);
+	weicha(&head, 5);
+	weicha(&head, 7);
+
+	Node* ret = find(&head,5);
+	insert(&head,ret,99);
+	Display(&head);
+
+	del(&head,ret);
+	Display(&head);
+
+}
+
+******************************************************************************************************************************************************************
