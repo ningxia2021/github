@@ -1,0 +1,124 @@
+Stack.h
+#pragma once
+
+#include<stdio.h>
+#include<assert.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+//栈：数组栈   栈的元素：数据，指针，栈顶；
+//数组栈->尾插+尾删 ;top从0开始，先赋值后top++；
+
+typedef struct stack {
+	int* p;
+	int capacity;
+	int top;
+}StackNode;
+
+void InitStack(StackNode* head);
+
+void StackPush(StackNode* head, int x);
+
+void StackPop(StackNode* head);
+
+int StackTop(StackNode* head);
+
+bool Emp(StackNode* head);
+
+void Display(StackNode* head);
+
+void Destory(StackNode* head);
+************************************************************************
+stack.c
+#include"stack.h"
+
+//初始化
+void InitStack(StackNode* head) {
+	//head->data = 0;
+	head->p = malloc(sizeof(StackNode)*4);
+	if (head->p == NULL) {
+		printf("malloc init failed \n");
+		exit(-1);
+	}
+	head->top = 0;
+	head->capacity = 5;
+}
+
+//压栈
+void StackPush(StackNode* head, int x) {
+	assert(head);
+	//判断是否需要扩容
+	if (head->top == head->capacity)
+	{
+		StackNode* tmp = malloc(sizeof(StackNode) * head->capacity * 2);
+		if (tmp == NULL)
+		{
+			return printf("malloc failed\n");
+			exit(-1);
+		}
+		else
+		{
+			head->p = tmp;
+			head->capacity *= 2;
+		}
+	}
+	//压栈 即尾插
+	head->p[head->top] = x;
+	head->top++;
+}
+
+//出栈
+void StackPop(StackNode* head) {
+	assert(head);
+	assert(head->top > 0);
+	head->top--;
+}
+
+//取栈顶元素
+int StackTop(StackNode* head) {
+	assert(head);
+	return head->p[head->top-1];
+}
+//判断是否为空
+bool Emp(StackNode* head) {
+	assert(head);
+	return head->top == 0;
+}
+//打印
+void Display(StackNode* head) {
+	assert(head);
+	StackNode* cur = head;
+	for (size_t i = 0; i < head->top; i++)
+	{
+		printf("%d,",cur->p[i]);
+	}
+	printf("\n");
+}
+//内存释放
+void Destory(StackNode* head) {
+	free(head->p);
+	head->p == NULL;
+	head->top = head->capacity = 0;
+}
+*****************************************************
+main.c
+#include"stack.h"
+
+void main() {
+	StackNode s;
+	InitStack(&s);
+	StackPush(&s, 1);
+	StackPush(&s, 2);
+	StackPush(&s, 3);
+
+	Display(&s);
+	StackPop(&s,3);
+	StackPop(&s, 2);
+
+	Display(&s);
+	int res = StackTop(&s);
+	printf("栈顶元素为：%d \n",res);
+	bool b = Emp(&s);
+	printf("%d",b);
+	Destory(&s);
+}
