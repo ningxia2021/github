@@ -1,0 +1,97 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+
+struct node {
+	char data;
+	struct node* left;
+	struct node* right;
+};
+
+typedef struct node node;
+
+//前序：根->左子树->右子树
+void prevOrder(node* n);
+
+//中序：左子树->根->右子树
+void midOrder(node* n);
+
+//后序：左子树->右子树->根
+void lastOrder(node* n);
+-------------------------------------------------------
+#include"2xTree.h"
+
+//前序：根->左子树->右子树
+void prevOrder(node* root) {
+	if (root == NULL)
+	{
+		return NULL;
+	}
+	printf("%c ", root->data);
+	prevOrder(root->left);
+	prevOrder(root->right);
+}
+
+//中序：左子树->根->右子树
+void midOrder(node* root) {
+	if (root == NULL)
+	{
+		return NULL;
+	}
+	midOrder(root->left);
+	printf("%c ", root->data);
+	midOrder(root->right);
+}
+
+//后序：左子树->右子树->根
+void lastOrder(node* root) {
+	if (root == NULL)
+	{
+		return NULL;
+	}
+	lastOrder(root->left);
+	lastOrder(root->right);
+	printf("%c ", root->data);
+
+}
+-------------------------------------------------------
+#include"2xTree.h"
+
+void main() {
+	//初始化一个二叉树
+	node* A = (node*)malloc(sizeof(node));
+	A->data = 'A';
+	A->left = NULL;
+	A->right = NULL;
+	node* B = (node*)malloc(sizeof(node));
+	B->data = 'B';
+	B->left = NULL;
+	B->right = NULL;
+	node* C = (node*)malloc(sizeof(node));
+	C->data = 'C';
+	C->left = NULL;
+	C->right = NULL;
+	node* D = (node*)malloc(sizeof(node));
+	D->data = 'D';
+	D->left = NULL;
+	D->right = NULL;
+	node* E = (node*)malloc(sizeof(node));
+	E->data = 'E';
+	E->left = NULL;
+	E->right = NULL;
+
+
+	A->left = B;
+	A->right = C;
+	B->left = D;
+	B->right = E;
+	printf("前序：");
+	prevOrder(A);
+	printf("\n");
+	printf("中序：");
+	midOrder(A);
+	printf("\n");
+	printf("后序：");
+	lastOrder(A);
+
+}
