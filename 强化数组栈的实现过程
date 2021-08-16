@@ -1,0 +1,149 @@
+stack.h
+
+#pragma once
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+#include<stdbool.h>
+
+/*建立在顺序表基础上，定义一个栈
+  顺序表，指针，数据，大小，容量
+  栈，先进后出，进：尾插；出：尾删；
+*/
+
+//定义结构体
+typedef int StackDataType;
+
+struct StackArr {
+	StackDataType* point;
+	int top;
+	int capacity;
+};
+
+//初始化
+void InitStackArr(struct StackArr* arr);
+//打印
+void DisplaySrackArr(struct StackArr* arr);
+//尾插
+void StackPush(struct StackArr* arr, StackDataType x);
+//尾删
+void StackPop(struct StackArr* arr);
+//Empty
+bool EmptyStackArr(struct StackArr* arr);
+//销毁
+void StackDestroy(struct StackArr* arr);
+//取栈顶元素
+StackDataType StackTop(struct StackArr* arr);
+//栈元素个数
+int StackSize(struct StackArr* arr);
+
+----------------------------------------------------------------------------------------------------------
+
+stack.c
+
+#include"stack.h"
+
+void InitStackArr(struct StackArr* arr) {
+	arr->capacity = 5;
+	arr->point = (StackDataType*)malloc(sizeof(StackDataType)*(arr->capacity));
+	if (arr->point == NULL)
+	{
+		printf("init malloc failed\n");
+		exit(-1);
+	}
+	arr->top = 0;
+}
+
+//打印
+void DisplaySrackArr(struct StackArr* arr) {
+	for (size_t i = 0; i < arr->top; i++)
+	{
+		printf("%d ", arr->point[i]);
+	}
+	printf("\n");
+}
+//尾插
+void StackPush(struct StackArr* arr, StackDataType x) {
+	//判断地址是否为空
+	assert(arr);
+	//凡是插入都要牵扯一个问题：是否需要扩容
+	if (arr->top == arr->capacity)
+	{
+		//扩容
+		StackDataType* temp = (StackDataType*)realloc(arr->point, sizeof(StackDataType) * arr->capacity * 2);
+		if (temp == NULL)
+		{
+			printf("relloc filed\n");
+			exit(-1);
+		}
+		arr->capacity *= 2;
+		arr->point = temp;
+	}
+	//top = 0; 先插入 后top++;
+
+	arr->point[arr->top] = x;
+	arr->top++;
+}
+//尾删
+void StackPop(struct StackArr* arr) {
+	assert(arr);
+	//top要大于0 才有可能减；
+	assert(arr->top > 0);
+	arr->top--;
+}
+//Empty
+bool EmptyStackArr(struct StackArr* arr) {
+	assert(arr);
+	return arr->top == 0;
+}
+//销毁
+void StackDestroy(struct StackArr* arr) {
+	assert(arr);
+	arr->top = arr->capacity = 0;
+	free(arr->point);
+}
+//取栈顶元素
+StackDataType StackTop(struct StackArr* arr) {
+	assert(arr);
+	assert(arr->top > 0);
+	return arr->point[arr->top - 1];
+}
+//栈元素个数
+int StackSize(struct StackArr* arr) {
+	assert(arr);
+	return arr->top;
+}
+
+----------------------------------------------------------------------------------------------------------
+
+main.c
+
+#include"stack.h"
+
+void main() {
+	struct StackArr arr;
+	InitStackArr(&arr);
+	printf("栈是否为空：");
+	printf("%d \n", EmptyStackArr(&arr));
+	StackPush(&arr, 1);
+	StackPush(&arr, 2);
+	StackPush(&arr, 3);
+	StackPush(&arr, 4);
+	StackPush(&arr, 5);
+	StackPush(&arr, 6);
+	StackPush(&arr, 7);
+	DisplaySrackArr(&arr);
+	
+	StackPop(&arr, 7);
+	DisplaySrackArr(&arr);
+
+	printf("栈是否为空：");
+	printf("%d \n", EmptyStackArr(&arr));
+
+	int top = StackTop(&arr);
+	printf("栈顶元素为：%d \n",top);
+
+	StackDataType size = StackSize(&arr);
+	printf("栈元素个数为：%d\n",size);
+}
