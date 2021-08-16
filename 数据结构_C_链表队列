@@ -1,0 +1,159 @@
+Queue.h
+#pragma once
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+#include<stdbool.h>
+
+/*
+队列，先进的先出，尾插头删，因此很适合单链表的优势；
+*/
+
+//定义一个符合队列特点的单链表
+typedef int QueueDatatype;
+
+typedef struct QueueList {
+	QueueDatatype data;
+	struct QueueList* next;
+}QNode;
+
+//定义队列的头节点，尾节点
+typedef struct Queue {
+	QNode* head;
+	QNode* tail;
+}Queue;
+
+//初始化
+void init(Queue* qnode);
+//销毁
+void destory(Queue* pq);
+//尾：入队列
+void Qpush(Queue* pq , QueueDatatype x);
+//头：出队列
+void Qpop(Queue* pq);
+//判断Emp
+bool Emp(Queue* pq);
+//打印
+void display(Queue* pq);
+//获取队头元素
+QueueDatatype QueueFront(Queue* pq);
+//获取队尾元素
+QueueDatatype QueueBack(Queue* pq);
+---------------------------------------------------------
+Queue.c
+
+#include"Queue.h"
+
+//初始化
+void init(Queue* pq) {
+	assert(pq);
+	pq->head = pq->tail=NULL;
+}
+
+//销毁
+void destory(Queue* pq) {
+	assert(pq);
+	QNode* cur = pq->head;
+	//回收队列中的指针；
+	while (cur)
+	{
+		QNode* curnexr = cur->next;
+		free(cur);
+		cur = curnexr;
+	}
+	//断开头尾联系，避免野指针问题
+	pq->head = pq->tail = NULL;
+}
+
+//入队列
+void Qpush(Queue* pq, QueueDatatype x) {
+	//定义一个节点接受入队参数,因此要为新节点开辟空间
+	struct QueueList* node = (struct QueueList*)malloc(sizeof(struct QueueList));
+	if (node == NULL)
+	{
+		printf("malloc failed\n");
+		exit(-1);
+	}
+	node->data = x;
+	node->next = NULL;
+	//判断头节点状态
+	if (pq->tail == NULL)
+	{
+		pq->tail = pq->head = node;
+		return;
+	}
+	//连起来
+	pq->tail->next = node;
+	//移动尾节点
+	pq->tail = node;
+}
+
+//判断Emp
+bool Emp(Queue* pq) {
+	assert(pq);
+	return pq->tail == NULL;
+}
+//打印
+void display(Queue* pq) {
+	assert(pq);
+	QNode* cur = pq->head;
+	while (cur)
+	{
+		printf("%d ",cur->data);
+		cur = cur->next;
+	}
+	printf("\n");
+}
+//头：出队列
+void Qpop(Queue* pq) {
+	assert(pq);
+	//空队列
+	assert(pq->head);
+	//1个节点
+	if (pq->head->next == NULL) {
+		free(pq->head);
+		pq->head = pq->tail = NULL;
+	}
+	//多个节点
+	else {
+		QNode* cur = pq->head->next;
+		free(pq->head);
+		pq->head = cur;
+	}
+}
+//获取队头元素
+QueueDatatype QueueFront(Queue* pq) {
+	assert(pq);
+	//空队列则会空指针
+	assert(pq->head);
+	return pq->head->data;
+}
+//获取队尾元素
+QueueDatatype QueueBack(Queue* pq) {
+	assert(pq);
+	//空队列则会空指针
+	assert(pq->head);
+	return pq->tail->data;
+}
+------------------------------------------------------
+main.c
+#include"stack.h"
+#include"Queue.h"
+
+void main() {
+	Queue pq;
+	init(&pq);
+	printf("队列是否为空：%d \n", Emp(&pq));
+	Qpush(&pq, 1);
+	Qpush(&pq, 2);
+	Qpush(&pq, 3);
+	Qpush(&pq, 4);
+	Qpush(&pq, 5);
+	display(&pq);
+	printf("队列是否为空：%d \n", Emp(&pq));
+	Qpop(&pq);
+	display(&pq);
+	printf("队头元素为：%d \n", QueueFront(&pq)); 
+	printf("队尾元素为：%d \n", QueueBack(&pq));
+}
