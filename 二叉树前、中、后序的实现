@@ -24,6 +24,9 @@ int TreeSize(node* root);
 
 // 叶子节点的个数
 int TreeLeafSize(node* root);
+
+//求树的深度
+int TreeDeep(node* root);
 -------------------------------------------------------
 #include"2xTree.h"
 
@@ -83,6 +86,20 @@ int TreeLeafSize(node* root) {
 	}
 	return TreeLeafSize(root->left) + TreeLeafSize(root->right);
 }
+//求树的深度
+int TreeDeep(node* root) {
+	if (root == NULL)
+	{
+		return NULL;
+	}
+	if (root->left == NULL && root->right == NULL)
+	{
+		return 1;
+	}
+	int leftnodes = TreeDeep(root->left);
+	int rightnods = TreeDeep(root->right);
+	return leftnodes > rightnods ? leftnodes+1:rightnods+1;
+}
 -------------------------------------------------------
 #include"2xTree.h"
 
@@ -135,5 +152,9 @@ void main() {
 	printf("C_Tree的节点总数为：%d\n", TreeSize(C));
 
 	printf("A_Tree所有叶子节点为：%d\n", TreeLeafSize(A));
+	
+	printf("A_Tree深度为：%d\n", TreeDeep(A));
+	printf("B_Tree深度为：%d\n", TreeDeep(B));
+	printf("C_Tree深度为：%d\n", TreeDeep(C));
 
 }
