@@ -1,0 +1,66 @@
+#include<stdio.h>
+
+/*希尔排序在直接插入排序的基础上的一种优化：因为在逆序情况下，直接插入排序每次插入都要遍历一边数组元组
+，复杂度很高；所以针对这种情况，伟大的希尔，提出了将数组元素间隔gap重新分组插入排序，gap越大，逆序情况
+下，大数据就越快回到数组高位，gap=1时，就是直接插入*/
+
+//希尔排序
+int* ShellSort(int* arr, int sz,int gap);
+
+void Print(int* arr);
+	
+void main() {
+	//定义一个数组
+	int arr[10] = {7,5,3,1,2,4,9,6,8,0};
+	int sz = sizeof(arr) / sizeof(int);
+	
+	int gap1 = 5;
+	Print(ShellSort(arr,sz,gap1));
+	printf("\n");
+  
+	int gap2 = 3;
+	Print(ShellSort(arr, sz, gap2));
+	printf("\n");
+  
+	int gap3 = 1;
+	Print(ShellSort(arr, sz, gap3));
+
+}
+
+void Print(int* arr) {
+	for (size_t j = 0; j < 10; j++)
+	{
+		printf("%d ", arr[j]);
+	}
+}
+
+int* ShellSort(int* arr, int sz , int gap) {
+	for (size_t i = 0; i < sz - 1; i++)
+	{
+		//定位每轮开始最后一个元素
+		int end = i*gap;
+    
+		//end +gap的后一位元素
+		int tem = arr[(i+1)*gap];
+    
+		//判断end 和 tem 不要越界
+		if ((i + 1) * gap > sz-1 || i*gap>sz-1) {
+			continue;
+		}
+    
+			while (end >= 0) {
+				if (arr[end] > tem) {
+					arr[end + gap] = arr[end];
+					end = end - gap;
+				}
+				else {
+					break;
+				}
+			}
+		
+			//这里是两种情况：1.break出来，插入队中；2.循环结束出来，插入队头；
+			arr[end +  gap] = tem;
+		}
+	return arr;
+	}
+
