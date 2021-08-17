@@ -18,6 +18,12 @@ void midOrder(node* n);
 
 //后序：左子树->右子树->根
 void lastOrder(node* n);
+
+//求树节点总数
+int TreeSize(node* root);
+
+// 叶子节点的个数
+int TreeLeafSize(node* root);
 -------------------------------------------------------
 #include"2xTree.h"
 
@@ -52,7 +58,30 @@ void lastOrder(node* root) {
 	lastOrder(root->left);
 	lastOrder(root->right);
 	printf("%c ", root->data);
+}
 
+//求树节点总数
+int TreeSize(node* root) {
+	//树 = 根 + 左子树 + 右子树；
+	//同时 左、右子树 也可是根 ；
+	if (root == NULL)
+	{
+		return NULL;
+	}
+	return 1+TreeSize(root->left) + TreeSize(root->right);
+}
+
+// 叶子节点的个数
+int TreeLeafSize(node* root) {
+	if (root == NULL)
+	{
+		return NULL;
+	}
+	if (root->left == NULL && root->right == NULL)
+	{
+		return 1;
+	}
+	return TreeLeafSize(root->left) + TreeLeafSize(root->right);
 }
 -------------------------------------------------------
 #include"2xTree.h"
@@ -63,35 +92,48 @@ void main() {
 	A->data = 'A';
 	A->left = NULL;
 	A->right = NULL;
+
 	node* B = (node*)malloc(sizeof(node));
 	B->data = 'B';
 	B->left = NULL;
 	B->right = NULL;
+
 	node* C = (node*)malloc(sizeof(node));
 	C->data = 'C';
 	C->left = NULL;
 	C->right = NULL;
+
 	node* D = (node*)malloc(sizeof(node));
 	D->data = 'D';
 	D->left = NULL;
 	D->right = NULL;
+
 	node* E = (node*)malloc(sizeof(node));
 	E->data = 'E';
 	E->left = NULL;
 	E->right = NULL;
 
-
 	A->left = B;
 	A->right = C;
 	B->left = D;
 	B->right = E;
+
 	printf("前序：");
 	prevOrder(A);
 	printf("\n");
+
 	printf("中序：");
 	midOrder(A);
 	printf("\n");
+
 	printf("后序：");
 	lastOrder(A);
+	printf("\n");
+
+	printf("A_Tree的节点总数为：%d\n",TreeSize(A));
+	printf("B_Tree的节点总数为：%d\n", TreeSize(B));
+	printf("C_Tree的节点总数为：%d\n", TreeSize(C));
+
+	printf("A_Tree所有叶子节点为：%d\n", TreeLeafSize(A));
 
 }
