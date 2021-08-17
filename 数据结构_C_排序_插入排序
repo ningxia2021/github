@@ -1,0 +1,40 @@
+#include<stdio.h>
+/*项目需求：对一个数组中的元素进行，插入排序
+插入排序：插入一个数字，按照大小顺序在整个数组中排序；类似于接牌的过程，
+按照牌的大小给牌排序，同时牌越来越多，占用的空间也是越来越大*/
+
+int* InserSort(int* arr, int sz);
+
+void main() {
+	//定义一个数组
+	int arr[10] = {7,5,3,1,2,4,9,6,8,0};
+	int sz = sizeof(arr) / sizeof(int);
+	int* p = InserSort(arr,sz);
+	for (size_t j = 0; j < 10; j++)
+	{
+		printf("%d ", p[j]);
+	}
+}
+
+//升序
+int* InserSort(int* arr, int sz) {
+	int end = 0;
+	int tem = 0;
+	for (size_t i = 0; i < sz-2; i++)
+	{
+		end = i;
+		tem = arr[end + 1];
+		while (end>=0) {
+			if (arr[end] > tem) {
+				arr[end + 1] = arr[end];
+				end--;
+			}
+			else {
+				break;
+			}
+		}
+		//这里是两种情况：1.从break出来，插入队中；2.从循环结束出来，插入队头；
+		arr[end + 1] = tem;
+	}
+	return arr;
+}
