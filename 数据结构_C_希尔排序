@@ -13,17 +13,21 @@ void main() {
 	//定义一个数组
 	int arr[10] = {7,5,3,1,2,4,9,6,8,0};
 	int sz = sizeof(arr) / sizeof(int);
-	
-	int gap1 = 5;
+	//Print(arr);
+	//printf("\n");
+	//Print(InserSort(arr, sz));
+
+	int gap1 = 3;
 	Print(ShellSort(arr,sz,gap1));
 	printf("\n");
-  
-	int gap2 = 3;
-	Print(ShellSort(arr, sz, gap2));
-	printf("\n");
-  
-	int gap3 = 1;
+
+	//int gap2 = 3;
+	//Print(ShellSort(arr, sz, gap2));
+	//printf("\n");
+
+	/*int gap3 = 1;
 	Print(ShellSort(arr, sz, gap3));
+	printf("\n");*/
 
 }
 
@@ -35,32 +39,25 @@ void Print(int* arr) {
 }
 
 int* ShellSort(int* arr, int sz , int gap) {
-	for (size_t i = 0; i < sz - 1; i++)
-	{
-		//定位每轮开始最后一个元素
-		int end = i*gap;
-    
-		//end +gap的后一位元素
-		int tem = arr[(i+1)*gap];
-    
-		//判断end 和 tem 不要越界
-		if ((i + 1) * gap > sz-1 || i*gap>sz-1) {
-			continue;
-		}
-    
-			while (end >= 0) {
-				if (arr[end] > tem) {
-					arr[end + gap] = arr[end];
-					end = end - gap;
-				}
-				else {
-					break;
-				}
-			}
+	
 		
-			//这里是两种情况：1.break出来，插入队中；2.循环结束出来，插入队头；
-			arr[end +  gap] = tem;
+		for (size_t i = 0; i < sz - gap; i++)
+		{
+			int end = i;
+				//end +gap的后一位元素
+				int tem = arr[end + gap];
+				
+				while (end >= 0) {
+					if (arr[end] > tem) {
+						arr[end + gap] = arr[end];
+						end = end - gap;
+					}
+					else {
+						break;
+					}
+				}
+				//这里是两种情况：1.break出来，插入队中；2.循环结束出来，插入队头；
+				arr[end + gap] = tem;
+			}
+			return arr;
 		}
-	return arr;
-	}
-
