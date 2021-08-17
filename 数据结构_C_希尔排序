@@ -40,24 +40,29 @@ void Print(int* arr) {
 
 int* ShellSort(int* arr, int sz , int gap) {
 	
-		
+	while (gap>1)
+	{
+		gap = gap / 2;
+
 		for (size_t i = 0; i < sz - gap; i++)
 		{
 			int end = i;
-				//end +gap的后一位元素
-				int tem = arr[end + gap];
-				
-				while (end >= 0) {
-					if (arr[end] > tem) {
-						arr[end + gap] = arr[end];
-						end = end - gap;
-					}
-					else {
-						break;
-					}
+			//end +gap的后一位元素
+			int tem = arr[end + gap];
+
+			while (end >= 0) {
+				if (arr[end] > tem) {
+					arr[end + gap] = arr[end];
+					end = end - gap;
 				}
-				//这里是两种情况：1.break出来，插入队中；2.循环结束出来，插入队头；
-				arr[end + gap] = tem;
+				else {
+					break;
+				}
 			}
-			return arr;
+			//这里是两种情况：1.break出来，插入队中；2.循环结束出来，插入队头；
+			arr[end + gap] = tem;
 		}
+
+	}
+			return arr;
+}
