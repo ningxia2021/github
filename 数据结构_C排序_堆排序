@@ -1,0 +1,73 @@
+#include<stdio.h>
+
+void heapsort(int* arr, int sz);
+Swap(int* arr1, int* arr2);
+
+void main() {
+
+	int arr[10] = { 3,5,1,4,2,9,7,8,6,0 };
+	int sz = sizeof(arr) / sizeof(int);
+	heapsort(arr,sz);
+	for (size_t i = 0; i < sz; i++)
+	{
+		printf("%d ",arr[i]);
+	}
+
+}
+
+void Down(int* arr, int sz,int root) {
+	
+	//选出左右子树最大的；
+	int parent = root;
+	int child = parent * 2 +1;//默认这是左子树  其+1 表示右子树
+
+	while (child < sz) {
+
+		if ( child + 1 < sz && arr[child] < arr[child+1]) {
+			//child表示大的子树的下标;
+			child = child + 1;
+		}
+
+		//判断根与子树的大小
+		if (arr[parent] < arr[child]) {
+			Swap(&arr[parent], &arr[child]);
+			parent = child;
+			child = parent * 2 + 1;
+		}
+		else {
+			break;
+		}
+	}
+}
+
+void heapsort(int* arr, int sz) {
+	//堆排序：默认堆结构是将数组元素按照完全二叉树进行排放；
+	//同时，大堆：所有根节点 都大于他的子树；小堆：根节点都小于它的子树；
+	//保证左右子树都小于根的情况下，向下调整。
+	//如何保证左右子树都小于根，需要从倒数第一个非叶子节点开始判断；一直判断到堆顶。
+	//完成整个建堆的过程
+
+	//建堆
+	//1.找倒数第一个非叶子节点:一定是最后一个节点(n-1)的父节点(n-1-1)/2
+	for (int i = (sz - 1 - 1) / 2; i >= 0; --i)
+	{
+		//2.将非叶子节点都变成大堆结构,用于向下调整算法；
+		Down(arr, sz, i);
+
+	}
+
+	// 排升序，建大堆还是小堆？建大堆
+	int end = sz - 1;
+	while (end > 0)
+	{
+		Swap(&arr[0], &arr[end]);
+		Down(arr, end, 0);
+		--end;
+	}
+}
+
+Swap(int* arr1, int* arr2) {
+	int tem = *arr1;
+	*arr1 = *arr2;
+	*arr2 = tem;
+}
