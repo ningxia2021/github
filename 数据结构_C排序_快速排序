@@ -1,0 +1,69 @@
+#include<stdio.h>
+
+//快速排序的核心思想，就是选择一个参考值key（一般是第一个元素）的元素，将key通过快速排序逻辑放在一个左边都是比他小的树且右边都是比他大的数
+//的位置上：  1.定义bigan 和 end 两个哨兵分别在队头和队尾，bagin ++ 发现比 key大的元素后停住、end-- 发现比key小的元素后停住；均发现后交换，然后继续相向而行；
+//直至begin == end 停止； 这时，交换 key 和 end；此时的key 左边全是比他小的且右边全是比他大的，它的位置就此固定！
+//以上是单趟的情况；
+
+//运用递归的思想，划分的每个左右区间都可以传区间坐标进行排序；
+
+void QuickSort(int* arr, int begin, int end);
+
+void swap(int* p1, int* p2) {
+	int tem = *p1;
+	*p1 = *p2;
+	*p2 = tem;
+}
+void print(int* p3 , int sz) {
+	for (size_t i = 0; i < sz; i++)
+	{
+		printf("%d ",p3[i]);
+	}
+}
+void main() {
+
+	//单趟情况
+	int arr[10] = {6,1,2,7,9,3,4,5,10,8};
+	//定义开始和结束下标
+	int begin = 0;
+	int n = sizeof(arr) / sizeof(int);
+	int end = n-1;
+	QuickSort(arr,begin,end);
+	print(arr , n);
+}
+
+void QuickSort(int* arr,int begin,int end) {
+
+	if (begin >= end) {
+		return;
+	}
+
+	int i = begin;
+	int key = arr[begin];
+	int j = end;
+	
+	while (i != j) 
+	{
+		//停下J
+		while (arr[j]>key && j > i)
+		{
+			j--;
+		}
+		//停下I
+		while (arr[i] <= key && j > i)
+		{
+			i++;
+		}
+		//交换 arr[i] arr[j]
+		swap(&arr[i],&arr[j]);
+	}
+	//相遇
+	swap(&arr[i], &arr[begin]);
+
+	//i这个点的值 确定好了；
+	//关注i左 和i右
+	QuickSort(arr, begin, i-1);
+	
+	QuickSort(arr, i+1 , end);
+
+	}
