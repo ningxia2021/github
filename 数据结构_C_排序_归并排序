@@ -1,0 +1,99 @@
+#include<stdio.h>
+#include<stdlib.h>
+/*归并算法：将一个数组中的元素平分，如果左右两边都是有序的，那么我们就可以比较大小将其插入一个新的数组空间，形成顺序；
+但，如何使平分后的元素有序呢？是不是可以一直分，分到一个数的时候，它就是有序的，然后再比较大小，插入新的数组空间去。
+差不多，就是这么个感觉，来吧 一把梭试试看*/
+
+
+void MagerSort(int* arr, int n);
+void Mager(int* arr, int left, int mid, int right, int* temp);
+void ms(int* arr, int left, int right, int* temp);
+
+
+void Display(int* arr, int n) {
+	for (int i = 0; i < n; i++)
+	{
+		printf("%d ", arr[i]);
+	}
+}
+
+
+
+void main() {
+	//定义一个数组
+	int arr[9] = {3,5,4,1,9,6,8,7,2};
+	int n = sizeof(arr) / sizeof(int);
+	MagerSort(arr,n);
+	Display(arr,n);
+}
+
+
+void Mager(int* arr, int left, int mid, int right, int* temp) {
+	int index = left;
+	int i = left;
+	int j = mid + 1;
+	//开始比大小插入进这个temp空间
+	while (i <= mid && j <= right)
+	{
+		if (arr[i] < arr[j]) {
+			temp[index] = arr[i];
+			index++;
+			i++;
+		}
+		else
+		{
+			temp[index] = arr[j];
+			index++;
+			j++;
+		}
+	}
+
+	while (i <= mid) {
+		temp[index++] = arr[i++];
+	}
+
+	while (j <= right) {
+		temp[index++] = arr[j++];
+	}
+
+	//temp目前所属部分是有序的了
+	for (int t = left; t <= right; t++)
+	{
+		arr[t] = temp[t];
+	}
+
+}
+
+void MagerSort(int* arr, int n) {
+	//开辟新空间
+	int* p = (int*)malloc(sizeof(int) * n);
+	if (p == NULL)
+	{
+		printf("空间开辟失败\n");
+		exit(0);
+	}
+	//定义一个开辟好的临时空间
+	int* temp = p;
+
+	ms(arr, 0, n - 1, temp);
+
+	free(temp);
+	
+}
+
+void ms(int* arr, int left, int right, int* temp) {
+	//判断是否到分割到最后一个元素
+	if (left >= right)
+	{
+		return;
+	}
+	//中点
+	int mid = (left + right) >> 1;
+	//不断一分二的过程
+	ms(arr, left, mid, temp);
+	ms(arr, mid + 1, right, temp);
+
+	//彻底分割完成，开始合并排序
+	Mager(arr, left, mid, right, temp);
+
+}
