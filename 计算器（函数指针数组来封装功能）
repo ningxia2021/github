@@ -1,0 +1,64 @@
+#include<stdio.h>
+
+int add(int x, int y) {
+	return x + y;
+}
+
+int sub(int x, int y) {
+	return x - y;
+}
+
+int mul(int x, int y) {
+	return x * y;
+}
+
+int div(int x, int y) {
+	return x / y;
+}
+
+int cal(int input) {
+	
+	//定义一个 指向数组的 函数指针,将功能封装
+	
+	printf("请输入两个操作数");
+	int a = 0;
+	int b = 0;
+	scanf_s("%d%d",&a,&b);
+	int (*p[5])(int, int) = { 0,add,sub,mul,div };
+	int ret = p[input](a,b);
+	return ret;
+
+
+}
+
+void main() {
+	int input = 0;
+	do
+	{
+		
+		printf("**********************************\n");
+		printf("***** 1.add     2.sub ************\n");
+		printf("***** 3.mul     4.div ************\n");
+		printf("***** 0.exit          ************\n");
+		printf("**********************************\n");
+
+
+		printf("请输入你的选择");
+		
+		scanf_s("%d", &input);
+		if (input > 0 && input <= 4)
+		{
+			int ret = cal(input);
+			printf("计算的结果是： %d \n", ret);
+		}
+		else if (input == 0)
+		{
+			return;
+		}
+		else
+		{
+			printf("输入的结果有误!\n");
+		}
+		
+	} while (input);
+}
